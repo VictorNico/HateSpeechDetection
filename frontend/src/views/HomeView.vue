@@ -15,19 +15,22 @@
                   </div>
 
                   <form>
-                    <p>Please connect to your discussion channel</p>
-                    <select class="form-select" aria-label="Default select example"  v-model="selectedRoom">
-                      <option selected value="">Open this select menu</option>
-                      <option :key="option._id" :value="option.name" v-for="option in roomList">Room ID : {option.name}</option>
-                    </select>
-                    <div class="my-2">
-                      <input type="text" class="form-control" id="RoomId" placeholder="Room name ID" v-model="roomId">
-                    </div>
-                    <div class="d-grid gap-2 my-2" v-if="canJoin">
-                        <button class="btn btn-warning text-white fw-bold fs-5" type="button" >Join Room</button>
-                    </div>
+                    <p>Please Join the Trial verison</p>
+<!--                    <select class="form-select" aria-label="Default select example"  v-model="selectedRoom">-->
+<!--                      <option selected value="">Open this select menu</option>-->
+<!--                      <option :key="option._id" :value="option.name" v-for="option in roomList">Room ID : {option.name}</option>-->
+<!--                    </select>-->
+<!--                    <div class="my-2">-->
+<!--                      <input type="text" class="form-control" id="RoomId" placeholder="Room name ID" v-model="roomId">-->
+<!--                    </div>-->
+<!--                    <div class="d-grid gap-2 my-2" v-if="canJoin">-->
+<!--                        <button class="btn btn-warning text-white fw-bold fs-5" type="button" >Join Room</button>-->
+<!--                    </div>-->
                     <div class="d-grid gap-2 my-2">
-                      <button class="btn btn-warning text-white fw-bold fs-5" type="button">Create Room</button>
+                      <router-link :to="{name:'room',params:{id:'JUIN2024'}}">
+                        <button class="btn btn-warning text-white fw-bold fs-5" type="button">Create Room</button>
+                      </router-link>
+
                     </div>
 
                   </form>

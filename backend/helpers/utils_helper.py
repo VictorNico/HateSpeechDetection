@@ -6,7 +6,7 @@ import nltk # to use word tokenize (split the sentence into words)
 from nltk.corpus import stopwords # to remove the stopwords
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
 from keras.utils import to_categorical
 from keras import backend as K
@@ -70,10 +70,26 @@ def preprocess(datas):
 
     return clean
 
+def recall(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    return recall
+
+def precision(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+
+def f1(y_true, y_pred):
+    precisions = precision(y_true, y_pred)
+    recalls = recall(y_true, y_pred)
+    return 2*((precisions*recalls)/(precisions+recalls+K.epsilon()))
 
 
 
-def predict(data):
+def predictor(data):
     if isinstance(data, list):
         clean_messages = preprocess(data)
         print(clean_messages)
@@ -81,15 +97,16 @@ def predict(data):
         X_test = tokenizer.texts_to_sequences(clean_messages)
         max_length = joblib.load('./models/max_length.sav')
         X_test = pad_sequences(X_test, maxlen=max_length)
-        model = joblib.load("./models/model.sav")
-        prediction = model.predict(X_test)
+        model = load_model("./models/model.h5")
+        prediction = model.predict(X_test).tolist()
+        prediction = [preds.index(max(preds)) for preds in prediction]
         return prediction
     return None
 
 
 if __name__ == '__main__':
-    nltk.download('punkt')
-    nltk.download('stopwords')
+    # nltk.download('punkt')
+    # nltk.download('stopwords')
     data = [
         "!!! RT @mayasolovely: As a woman you shouldn't complain about cleaning up your house. &amp; as a man you should always take the trash out...",
         '" momma said no pussy cats inside my doghouse "',
@@ -102,4 +119,4 @@ if __name__ == '__main__':
         '"@DunderbaIl: I\'m an early bird and I\'m a night owl, so I\'m wise and have worms."',
         '"@EdgarPixar: Overdosing on heavy drugs doesn\'t sound bad tonight." I do that pussy shit every day.'
     ]
-    predict(data)
+    print(predictor(data))
