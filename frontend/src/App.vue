@@ -16,7 +16,7 @@
 
 nav {
   padding: 300px;
-  background-image: url("@/assets/WhatsApp Image 2024-05-13 at 20.19.59.jpeg");
+  /*background-image: url("@/assets/WhatsApp Image 2024-05-13 at 20.19.59.jpeg");*/
   background-size: cover;
   background-position: center;
 

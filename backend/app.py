@@ -36,7 +36,6 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['DEBUG'] = os.getenv('DEBUG')
-    # app.config['DATABASE'] = os.getenv('DATABASE')
     app.config['MONGO_URI'] = os.getenv('DB_SRV_CONNECTOR')
     app.config['JWT_TOKEN_LOCATION'] = ["headers"]
     app.config['JWT_COOKIE_SECURE'] = False  # Set to True in production
@@ -44,13 +43,6 @@ def create_app():
     app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # Set to True in production
     app.config['SESSION_COOKIE_SAMESITE'] = "None"  # Set to True in production
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # 1 hour
-    # app.config['JWT_CSRF_IN_COOKIES'] = False
-    # Set the custom JSON serializer for User object
-    # app.json_encoder = user_encoder
-    # SqLite database
-    # database = SqliteDatabase(app.config['DATABASE'])
-    # mongodb
-    # Use LocalProxy to read the global db instance with just `db`
     db = LocalProxy(get_db)
 #     CORS(app)
     CORS(app, origins='*', methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], allow_headers=['Content-Type', 'Authorization'], supports_credentials=True)
@@ -74,22 +66,17 @@ def create_app():
     
     @app.route('/api/register', methods=['POST'])
     def register():
-        email = request.json['email']
-        username = request.json['username']
-        password = request.json['password']
-        if not username or not password:
-            return jsonify({'message': 'Missing username or password'}), 400
+        name = request.json['name']
+        if not name:
+            return jsonify({'message': 'Missing name'}), 400
 
-        if db.users.find_one({'username': username}):
-            return jsonify({'message': 'Username already exists'})
+        if db.users.find_one({'name': name}):
+            return jsonify({'message': 'name already exists'})
 
-        hashed_password = pbkdf2_sha256.hash(password)
         # Create a new user document
         timestamp = datetime.now()
         user = {
-            'email': email,
-            'username': username,
-            'password': hashed_password,
+            'name': name,
             'createdAt': timestamp,
             'updatedAt': timestamp
         }
